@@ -24,24 +24,34 @@ bottles = {
             5: ('not 2','is 1')      
 }
 """
-
+# global variables, the first is the allegedly (or temporarily) correct answer
+# the second is a list of the allegedly banned candidates
 allegedly = 0
 cannot_be = []
+
+#this function phrases the bottle statements and check wether they are feasible according to the 
+#suggested combination  of rulling
+#notice that rule==1 is challenging because it requires an iteration in-place
+#I admit that I didn't checked it much, but it seems that in spite of the above fact,
+#it didn't iterate when rule==1 but in another cases.
 
 def phrase(text,rule):
     n = 'not'
     i = 'is'
 
+    # some primitive initialization
     arg = [0,0]
     op = [0,0]
 
     global cannot_be
     global allegedly
-    cant_be = cannot_be
+    cant_be = cannot_be   # variable for the temporarily assignment of rule==1 cases
     
+    # switch the operators for getting a truth from a lie
     if (rule == 0) : 
         (n,i) = (i,n)    
     
+    # actual interpretation, extraction of the data
     for s in range(2):
         arg[s] = int(text[s].split()[1])
         op[s] = text[s].split()[0]
@@ -78,6 +88,7 @@ def phrase(text,rule):
                 return ans
     return ans 
 
+# sorting the rules,  truths first, lies then, mixes last
 def phrase_rules():
     rule = []
     for i in range(number_of_truths[2]):
@@ -93,7 +104,7 @@ def assign_bottles():
     global allegedly
     rules = phrase_rules();
     sequences = itertools.permutations(bottles.keys())
-     
+     # each permutation is challenged against the rules
     for sequence in sequences:
 
         allegedly = 0
@@ -101,6 +112,7 @@ def assign_bottles():
 
         for bottle,rule in zip(sequence,rules):
              if not phrase(bottles[bottle],rule) : break
+# if there were no breaks (we reached 'else') then we reached the correct solution and we can finish the function
         else:                          
             ans = {}
             for i in range(1,1+len(sequence)):
